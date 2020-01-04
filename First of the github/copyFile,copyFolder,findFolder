@@ -1,0 +1,99 @@
+package cn.xbjs.demo.Foundemental.array.IO;
+
+import java.io.*;
+
+/**
+ * \* Created with IntelliJ IDEA.
+ * \* User: 小布教授
+ * \* Date: 2019/12/29
+ * \* Time: 19:06
+ * \* To change this template use File | Settings | File Templates.
+ * \* Description:复制文件
+ * \
+ */
+public class TotalPractice {
+    public static void main(String[] args) throws FileNotFoundException {
+        /*String src = "C:\\Users\\小布教授\\Desktop\\数值分析.zip";
+        String dest = "C:\\Users\\小布教授\\Desktop\\数值分析1.zip";
+        copyFile(src,dest);*/
+        String src2 = "C:\\Users\\小布教授\\Desktop\\动力学绘图";
+        String dest2 = "C:\\Users\\小布教授\\Desktop\\223";
+        copyDirectories(src2,dest2);
+        String path = "D:";
+        find(path, "java","MyStringBuffer");
+    }
+
+    //复制文件
+    public static void copyFile(String srcFile ,String destFile) throws FileNotFoundException {
+        File src = new File(srcFile);
+        if(!src.exists()) {
+            throw new FileNotFoundException("原始文件不存在");
+        }
+        File dest = new File(destFile);
+        byte[] bytes = new byte[1024*1024];
+        int len = 0;
+        try(FileInputStream fis = new FileInputStream(src);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            FileOutputStream fos = new FileOutputStream(dest);
+            BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+            while((len=bis.read(bytes))!=-1) {
+                bos.write(bytes,0,len);
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    //复制文件夹
+    public static void copyDirectories(String srcFile ,String destFile) throws FileNotFoundException {
+        File src = new File(srcFile);
+        File dest = new File(destFile);
+        if(src.isFile()) {
+            copyFile(srcFile, destFile);
+        }
+        if(src.isDirectory()) {
+            if(!dest.exists()) {
+                dest.mkdirs();
+            }
+            File[] files = src.listFiles();
+            for (File file : files) {
+                File newFile = new File(dest,file.getName());
+                copyDirectories(file.getAbsolutePath(),newFile.getAbsolutePath());
+            }
+        }
+    }
+    //寻找文件夹
+    public static void find(String path,String type,String target) throws FileNotFoundException {
+        File floder = new File(path);
+        if(!floder.exists()) {
+            throw new FileNotFoundException();
+        }
+        if(floder.isFile()) {
+            if(floder.getName().endsWith(type)) {
+                findFile(floder.getAbsolutePath(),target);
+            }
+        }
+        if(floder.isDirectory()) {
+            File[] files = floder.listFiles();
+            for (File file : files) {
+                find(file.getAbsolutePath(),type,target);
+            }
+        }
+    }
+    //寻找文件
+    public static void findFile(String path,String target) {
+        File file = new File(path);
+        try(FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr)) {
+            String readLine;
+            while((readLine=br.readLine())!=null) {
+                if(readLine.contains(target)) {
+                    System.out.println(file.getAbsolutePath());
+                    return;
+                }
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+}
